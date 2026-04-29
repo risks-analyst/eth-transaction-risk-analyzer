@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TX Risk Analyzer</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #0f1115;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .card {
+    width: 360px;
+    padding: 24px;
+    background: #1a1d23;
+    border-radius: 12px;
+  }
+
+  h1 {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 20px;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #0f1115;
+    color: #fff;
+    font-size: 13px;
+    box-sizing: border-box;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #4caf50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    background: #333;
+    cursor: not-allowed;
+  }
+
+  .result {
+    margin-top: 20px;
+    display: none;
+  }
+
+  .risk-badge {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px solid #2a2d33;
+  }
+
+  .row span:first-child {
+    color: #888;
+  }
+
+  .row span:last-child {
+    color: #fff;
+    text-align: right;
+    max-width: 220px;
+  }
+
+  .motivo {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #aaa;
+    line-height: 1.6;
+    padding: 12px;
+    background: #0f1115;
+    border-radius: 8px;
+    border-left: 3px solid #4caf50;
+  }
+
+  .motivo.medium {
+    border-left-color: #fbc02d;
+  }
+
+  .motivo.high {
+    border-left-color: #e53935;
+  }
+
+  .error {
+    margin-top: 16px;
+    font-size: 13px;
+    color: #e53935;
+    padding: 10px;
+    background: #1a0f0f;
+    border-radius: 6px;
+    display: none;
+  }
+
+  .loader {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #888;
+    display: none;
+  }
+</style>
+</head>
+
+<body>
+<div class="card">
+  <h1>🔍 TX Risk Analyzer</h1>
+  <p class="subtitle">Paste a transaction hash to analyze its risk level.</p>
+
+  <input id="hashInput" type="text" placeholder="0x..." />
+  <button id="analyzeBtn" onclick="analyze()">Analyze</button>
+
+  <div class="loader" id="loader">⏳ Analyzing transaction...</div>
+  <div class="error" id="error"></div>
+
+  <div class="result" id="result">
+    <div class="risk-badge" id="riskBadge"></div>
+
+    <div class="row">
+      <span>Type</span>
+      <span id="tipo"></span>
+    </div>
+    <div class="row">
+      <span>Action</span>
+      <span id="accion"></span>
+    </div>
+    <div class="row">
+      <span>ETH Value</span>
+      <span id="eth"></span>
+    </div>
+    <div class="row">
+      <span>Amount</span>
+      <span id="cantidad"></span>
+    </div>
+
+    <div class="motivo" id="motivo"></div>
+  </div>
+</div>
+
+<script>
+async function analyze() {
+  const hash    = document.getElementById("hashInput").value.trim();
+  const btn     = document.getElementById("analyzeBtn");
+  const loader  = document.getElementById("loader");
+  const result  = document.getElementById("result");
+  const error   = document.getElementById("error");
+
+  if (!hash) return;
+
+  btn.disabled    = true;
+  loader.style.display  = "block";
+  result.style.display  = "none";
+  error.style.display   = "none";
+
+  try {
+    const res  = await fetch("/analizar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hash })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      error.innerText       = "Error: " + data.error;
+      error.style.display   = "block";
+    } else {
+      document.getElementById("riskBadge").innerText  = "Risk: " + data.riesgo;
+      document.getElementById("tipo").innerText       = data.tipo;
+      document.getElementById("accion").innerText     = data.accion;
+      document.getElementById("eth").innerText        = data.eth + " ETH";
+      document.getElementById("cantidad").innerText   = data.cantidad;
+      document.getElementById("motivo").innerText     = data.motivo;
+
+      const motivo = document.getElementById("motivo");
+      motivo.className = "motivo";
+      if (data.riesgo.includes("Medium")) motivo.classList.add("medium");
+      if (data.riesgo.includes("High"))   motivo.classList.add("high");
+
+      result.style.display = "block";
+    }
+
+  } catch (e) {
+    error.innerText     = "Connection error. Is the server running?";
+    error.style.display = "block";
+  }
+
+  btn.disabled         = false;
+  loader.style.display = "none";
+}
+</script>
+</body>
+</html>
