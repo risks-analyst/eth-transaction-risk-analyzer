@@ -13,7 +13,9 @@ Blockchain transactions are written in raw hexadecimal data that most users cann
 
 ## Live Demo
 
-> Coming soon — deploy instructions below.
+## Demo
+
+[![ETH Risk Analyzer Demo](https://img.youtube.com/vi/4YUZ-EINPLM/0.jpg)](https://youtu.be/4YUZ-EINPLM)
 
 ## Features
 
