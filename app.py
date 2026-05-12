@@ -1,3 +1,5 @@
+import threading
+import webbrowser
 from flask import Flask, render_template, request, jsonify
 from web3 import Web3
 
@@ -57,15 +59,19 @@ def analizar():
         eth_val   = w3.from_wei(tx["value"], "ether")
         riesgo, motivo = evaluar_riesgo(tx, resultado["tipo"], resultado["cantidad"])
         return jsonify({
-            "tipo":    resultado["tipo"],
-            "accion":  resultado["accion"],
-            "eth":     str(eth_val),
+            "tipo":     resultado["tipo"],
+            "accion":   resultado["accion"],
+            "eth":      str(eth_val),
             "cantidad": str(resultado["cantidad"]),
-            "riesgo":  riesgo,
-            "motivo":  motivo
+            "riesgo":   riesgo,
+            "motivo":   motivo
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+def abrir_navegador():
+    webbrowser.open("http://127.0.0.1:5000")
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    threading.Timer(1.5, abrir_navegador).start()
+    app.run(debug=False, port=5000)
