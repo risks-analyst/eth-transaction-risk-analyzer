@@ -5,7 +5,7 @@ Real-time Ethereum transaction risk analyzer. Detects transaction types, decodes
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![Flask](https://img.shields.io/badge/Flask-3.x-green)
 ![Web3](https://img.shields.io/badge/Web3.py-7.x-orange)
-![Preview](assets/risk analyzer.png)
+![Preview](assets/preview.png)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ## Problem

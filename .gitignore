@@ -1,5 +1,4 @@
 venv/
+eth_bot/venv/
 __pycache__/
 .env
-*.pyc
-*.zip
