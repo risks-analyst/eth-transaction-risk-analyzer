@@ -5,6 +5,7 @@ Real-time Ethereum transaction risk analyzer. Detects transaction types, decodes
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![Flask](https://img.shields.io/badge/Flask-3.x-green)
 ![Web3](https://img.shields.io/badge/Web3.py-7.x-orange)
+![Preview](assets/risk analyzer.png)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ## Problem
@@ -100,10 +101,18 @@ Open your browser at `http://localhost:5000`
 ## Technical Decisions
 
 **Why Flask over FastAPI?**
-Flask is lightweight and sufficient for a synchronous request-response model. FastAPI will be used in future versions for async support.
+[cite_start]Flask is lightweight and sufficient for a synchronous request-response model. [cite: 1203] [cite_start]FastAPI will be used in future versions for async support. [cite: 1204]
 
 **Why selector-based detection over full ABI decoding?**
-ERC-20 selectors are universal across all contracts. This approach works without requiring the contract ABI, making it faster and more accessible.
+[cite_start]ERC-20 selectors are universal across all contracts. [cite: 1205] [cite_start]This approach works without requiring the contract ABI, making it faster and more accessible. [cite: 1206]
+
+## Challenges & Learnings
+
+- [cite_start]**Heuristic Decoders without ABIs:** Overcame the limitation of pulling complete contract ABIs by indexing universal ERC-20 function selectors directly (`0xa9059cbb` for transfers, `0x095ea7b3` for approvals), achieving instant execution speeds[cite: 1205, 1206].
+- [cite_start]**EVM Input Data Parsing:** Solved complex byte-to-hex manipulation constraints to cleanly slice the raw transaction input fields into standard 64-character parameter offsets[cite: 192, 193, 274].
+- [cite_start]**Balanced Risk Communication:** Developed cautious, probabilistic heuristics ("It is possible", "Lo más probable") rather than definitive alarms, aligning technical accuracy with intuitive user safety[cite: 334, 345].
+
+## Roadmap
 
 ## Roadmap
 
