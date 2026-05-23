@@ -1,7 +1,17 @@
-import threading
+if not w3.is_connected():
+    logger.error("Connection failed. Check your RPC.")
+    exit()
+logger.info("Connected to Ethereum successfully")
 import webbrowser
 from flask import Flask, render_template, request, jsonify
 from web3 import Web3
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
